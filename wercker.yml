@@ -1,0 +1,28 @@
+build:
+    box: google/golang
+    steps:
+    # Test the project
+    - script:
+        name: go test
+        code: |
+          go test ./...
+
+        # Build the project
+    - script:
+        name: go build
+        code: |
+          go build -o app ./... 
+    - script:
+        name: copy binary
+        code: cp main $WERCKER_OUTPUT_DIR/
+
+deploy:
+  box: scratch
+  steps:
+    - internal/docker-push:
+        username: $USERNAME
+        password: $PASSWORD
+        tag: 1.0
+        cmd: ./app
+        repository: quay.io/mies/go-app
+        registry: https:/quay.io
