@@ -15,14 +15,21 @@ build:
     - script:
         name: copy binary
         code: cp app $WERCKER_OUTPUT_DIR/
+            
+    - script:
+        name: display contents and make exec
+        code: echo $WERCKER_OUTPUT_DIR/
 
 deploy:
     box: phusion/baseimage
     steps:
+    - script:
+            name: make exec
+            code: ls -la /pipeline/output && chmod +x /pipeline/output/app
     - internal/docker-push:
         username: $USERNAME
         password: $PASSWORD
+        cmd: ./pipeline/output/app
         tag: 1.0
-        cmd: ./app
         repository: quay.io/mies/go-app
         registry: https://quay.io
