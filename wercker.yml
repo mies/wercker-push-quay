@@ -14,7 +14,7 @@ build:
           go build -o app ./... 
     - script:
         name: copy binary
-        code: cp main $WERCKER_OUTPUT_DIR/
+        code: cp app $WERCKER_OUTPUT_DIR/
 
 deploy:
   box: scratch
