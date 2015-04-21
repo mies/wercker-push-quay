@@ -17,12 +17,12 @@ build:
         code: cp app $WERCKER_OUTPUT_DIR/
 
 deploy:
-  box: scratch
-  steps:
+    box: phusion/baseimage
+    steps:
     - internal/docker-push:
         username: $USERNAME
         password: $PASSWORD
         tag: 1.0
         cmd: ./app
         repository: quay.io/mies/go-app
-        registry: https:/quay.io
+        registry: https://quay.io
