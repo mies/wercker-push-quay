@@ -30,6 +30,6 @@ deploy:
         username: $USERNAME
         password: $PASSWORD
         cmd: ./pipeline/source/app
-        tag: 1.0
+        tag: foo
         repository: quay.io/mies/go-app
         registry: https://quay.io
