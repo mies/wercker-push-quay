@@ -18,5 +18,5 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
-	log.Println("Listening on: http://localhost:5000")
+	log.Println("Listening on this host: http://localhost:5000")
 }
