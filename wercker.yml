@@ -18,7 +18,7 @@ build:
         code: cp app $WERCKER_OUTPUT_DIR
 
 deploy:
-    box: phusion/baseimage
+    box: scratch
     steps:
     - script:
             name: make exec
@@ -28,6 +28,7 @@ deploy:
         username: $USERNAME
         password: $PASSWORD
         cmd: ./pipeline/source/app
-        tag: foobar
+        tag: ports
+        ports: 5000
         repository: quay.io/mies/go-app
         registry: https://quay.io
