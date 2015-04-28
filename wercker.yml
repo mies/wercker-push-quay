@@ -15,7 +15,7 @@ build:
         # Copy binary to location that gets passed along to deploy
     - script:
         name: copy binary
-        code: cp app $WERCKER_OUTPUT_DIR
+        code: cp app cities-service.json cities-controller.json download-kube.sh $WERCKER_OUTPUT_DIR
 
 deploy:
     box: phusion/baseimage
