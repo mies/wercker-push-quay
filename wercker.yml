@@ -30,5 +30,5 @@ deploy:
         cmd: ./pipeline/source/app
         tag: ports
         ports: 5000
-        repository: quay.io/mies/go-app
+        repository: quay.io/wercker/go-app
         registry: https://quay.io
