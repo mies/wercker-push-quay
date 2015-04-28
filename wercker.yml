@@ -11,7 +11,7 @@ build:
     - script:
         name: go build
         code: |
-          go build -o app ./... 
+          go build -o app ./...
         # Copy binary to location that gets passed along to deploy
     - script:
         name: copy binary
@@ -23,12 +23,12 @@ deploy:
     - script:
             name: make exec
             code: chmod +x /pipeline/source/app
-              
+
     - internal/docker-push:
         username: $USERNAME
         password: $PASSWORD
         cmd: ./pipeline/source/app
-        tag: ports
+        tag: latest
         ports: "5000"
         repository: quay.io/wercker/go-app
         registry: https://quay.io
