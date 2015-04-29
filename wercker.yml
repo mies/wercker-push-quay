@@ -42,7 +42,7 @@ deploy:
     - script:
         name: create rc
         code: |
-            kubernetes/platforms/linux/amd64/kubectl kubernetes/platforms/linux/amd64/kubectl \
+            kubernetes/platforms/linux/amd64/kubectl \
                 --server="${KUBERNETES_MASTER}" \
                 --username="${KUBERNETES_USERNAME}" \
                 --password="${KUBERNETES_PASSWORD}" \
@@ -52,7 +52,7 @@ deploy:
     - script:
         name: create service
         code: |
-            kubernetes/platforms/linux/amd64/kubectl kubernetes/platforms/linux/amd64/kubectl \
+            kubernetes/platforms/linux/amd64/kubectl \
                 --server="${KUBERNETES_MASTER}" \
                 --username="${KUBERNETES_USERNAME}" \
                 --password="${KUBERNETES_PASSWORD}" \
