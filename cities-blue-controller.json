@@ -1,24 +1,26 @@
 {
   "apiVersion": "v1beta1",
   "kind": "ReplicationController",
-  "id": "cities-controller",
+  "id": "cities-blue",
   "desiredState": {
     "replicas": 3,
-    "replicaSelector": { "name": "cities" },
+    "replicaSelector": { "name": "cities", "deploy": "blue" },
     "podTemplate": {
       "desiredState": {
         "manifest": {
           "version": "v1beta1",
-          "id": "cities-controller",
+          "id": "cities-blue",
+          "imagePullPolicy": "PullAlways",
           "containers": [{
-            "image": "quay.io/wercker/go-app",
+            "imagePullPolicy": "PullAlways",
+            "image": "quay.io/wercker/go-app:latest",
             "name": "cities",
             "ports": [{ "name": "http-server", "containerPort": 5000 }]
           }]
         }
       },
-      "labels": { "name": "cities" }
+      "labels": { "name": "cities", "deploy": "blue" }
     }
   },
-  "labels": { "name": "cities" }
+  "labels": { "name": "cities", "deploy": "blue" }
 }
