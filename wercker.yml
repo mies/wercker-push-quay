@@ -15,7 +15,7 @@ build:
         # Copy binary to location that gets passed along to deploy
     - script:
         name: copy binary
-        code: cp app cities-service.json cities-controller.json download-kube.sh $WERCKER_OUTPUT_DIR
+        code: cp app cities-service.json cities-blue-controller.json cities-green-controller.json download-kube.sh $WERCKER_OUTPUT_DIR
 
 deploy:
     box: phusion/baseimage
@@ -47,7 +47,7 @@ deploy:
                 --username="${KUBERNETES_USERNAME}" \
                 --password="${KUBERNETES_PASSWORD}" \
                 --insecure-skip-tls-verify="true" \
-                create -f cities-controller.json
+                create -f cities-green-controller.json
 
     - script:
         name: create service
@@ -66,4 +66,32 @@ deploy:
 
     - script:
         name: rolling update
-        code:
+        code: |
+            info "Retrieving running rc"
+            if kubernetes/platforms/linux/amd64/kubectl \
+                    --server="${KUBERNETES_MASTER}" \
+                    --username="${KUBERNETES_USERNAME}" \
+                    --password="${KUBERNETES_PASSWORD}" \
+                    --insecure-skip-tls-verify="true" \
+                    get rc cities-green > /dev/null 2> /dev/null; then
+                info "Currently running rc: cities-green"
+                info "Starting rolling-update"
+                kubernetes/platforms/linux/amd64/kubectl \
+                    --server="${KUBERNETES_MASTER}" \
+                    --username="${KUBERNETES_USERNAME}" \
+                    --password="${KUBERNETES_PASSWORD}" \
+                    --insecure-skip-tls-verify="true" \
+                    rolling-update cities-green --update-period=10s -f cities-blue-controller.json
+                info "Finished update"
+            else
+                info "Currently running rc: cities-blue"
+                info "Starting rolling-update"
+                kubernetes/platforms/linux/amd64/kubectl \
+                    --server="${KUBERNETES_MASTER}" \
+                    --username="${KUBERNETES_USERNAME}" \
+                    --password="${KUBERNETES_PASSWORD}" \
+                    --insecure-skip-tls-verify="true" \
+                    rolling-update cities-blue --update-period=10s -f cities-green-controller.json
+                info "Finished update"
+            fi
+
