@@ -18,10 +18,10 @@ build:
         code: cp app cities-service.json cities-blue-controller.json cities-green-controller.json download-kube.sh $WERCKER_OUTPUT_DIR
 
 deploy:
-    box: phusion/baseimage
+    box: busybox
     steps:
     - script:
-        name: make exec
+        name: make executable
         code: chmod +x /pipeline/source/app
 
     - internal/docker-push:
@@ -30,7 +30,7 @@ deploy:
         cmd: ./pipeline/source/app
         tag: latest
         ports: "5000"
-        repository: quay.io/wercker/go-app
+        repository: quay.io/wercker/wercker-kubernetes-quay
         registry: https://quay.io
 
     # Run this to create the rc and service
