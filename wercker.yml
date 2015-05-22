@@ -18,9 +18,7 @@ build:
         code: cp app cities-service.json cities-blue-controller.json cities-green-controller.json download-kube.sh $WERCKER_OUTPUT_DIR
 
 deploy:
-  box: 
-    id: google/golang
-    cmd: /bin/sh
+  box: google/golang
   steps:
   - script:
       name: make executable
