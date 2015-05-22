@@ -19,7 +19,7 @@ build:
 
 deploy:
   box: 
-    id: busybox
+    id: google/golang
     cmd: /bin/sh
   steps:
   - script:
