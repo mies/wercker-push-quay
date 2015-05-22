@@ -21,7 +21,7 @@
       "spec": {
         "containers": [
           {
-            "imagePullPolicy": "PullAlways",
+            "imagePullPolicy": "Always",
             "image": "quay.io/wercker/go-app:latest",
             "name": "cities",
             "ports": [
