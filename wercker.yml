@@ -44,14 +44,14 @@ deploy:
         server: $KUBERNETES_MASTER
         username: $KUBERNETES_USERNAME
         password: $KUBERNETES_PASSWORD
-        skip-tls-verify: true
+        insecure-skip-tls-verify: true
         command: create -f cities-controller.json
 
     - kubectl:
         server: $KUBERNETES_MASTER
         username: $KUBERNETES_USERNAME
         password: $KUBERNETES_PASSWORD
-        skip-tls-verify: true
+        insecure-skip-tls-verify: true
         command: create -f cities-service.json
 
     rolling-update:
@@ -59,6 +59,6 @@ deploy:
         server: $KUBERNETES_MASTER
         username: $KUBERNETES_USERNAME
         password: $KUBERNETES_PASSWORD
-        skip-tls-verify: true
+        insecure-skip-tls-verify: true
         command: rolling-update cities
         image: quay.io/wercker/wercker-kubernetes-quay:$WERCKER_GIT_COMMIT
