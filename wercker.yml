@@ -61,4 +61,4 @@ deploy:
         password: $KUBERNETES_PASSWORD
         skip-tls-verify: true
         command: rolling-update cities
-        image: quay.io/wercker/go-app:$WERCKER_GIT_COMMIT
+        image: quay.io/wercker/wercker-kubernetes-quay:$WERCKER_GIT_COMMIT

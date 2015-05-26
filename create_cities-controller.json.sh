@@ -19,14 +19,14 @@ cat > cities-controller.json <<EOF
       "metadata": {
         "labels": {
           "name": "cities",
-          "deployment": "$WERCKER_GIT_COMMIT"
+          "deployment": "${WERCKER_GIT_COMMIT}"
         }
       },
       "spec": {
         "containers": [
           {
             "imagePullPolicy": "Always",
-            "image": "quay.io/wercker/go-app:$WERCKER_GIT_COMMIT",
+            "image": "quay.io/wercker/wercker-kubernetes-quay:${WERCKER_GIT_COMMIT}",
             "name": "cities",
             "ports": [
               {
