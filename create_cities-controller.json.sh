@@ -1,3 +1,6 @@
+#!/bin/bash
+
+cat > cities-controller.json <<EOF
 {
   "kind": "ReplicationController",
   "apiVersion": "v1beta3",
@@ -15,14 +18,15 @@
     "template": {
       "metadata": {
         "labels": {
-          "name": "cities"
+          "name": "cities",
+          "deployment": "$WERCKER_GIT_COMMIT"
         }
       },
       "spec": {
         "containers": [
           {
             "imagePullPolicy": "Always",
-            "image": "quay.io/wercker/go-app:latest",
+            "image": "quay.io/wercker/go-app:$WERCKER_GIT_COMMIT",
             "name": "cities",
             "ports": [
               {
@@ -37,3 +41,4 @@
     }
   }
 }
+EOF

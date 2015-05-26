@@ -13,6 +13,11 @@ build:
         code: |
           CGO_ENABLED=0 go build -a -installsuffix cgo -o app .
         # Copy binary to location that gets passed along to deploy
+
+    - script:
+        name: create cities-controller.json
+        code: ./create_cities-controller.json.sh
+
     - script:
         name: copy binary
         code: cp app cities-service.json cities-controller.json "$WERCKER_OUTPUT_DIR"
@@ -28,7 +33,7 @@ deploy:
         username: $USERNAME
         password: $PASSWORD
         cmd: ./pipeline/source/app
-        tag: latest
+        tag: $WERCKER_GIT_COMMIT
         ports: "5000"
         repository: quay.io/wercker/wercker-kubernetes-quay
         registry: https://quay.io
@@ -55,5 +60,5 @@ deploy:
         username: $KUBERNETES_USERNAME
         password: $KUBERNETES_PASSWORD
         skip-tls-verify: true
-        command: rolling-update
-        image: quay.io/wercker/go-app:latest
+        command: rolling-update cities
+        image: quay.io/wercker/go-app:$WERCKER_GIT_COMMIT
