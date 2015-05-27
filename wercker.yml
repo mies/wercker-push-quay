@@ -11,87 +11,54 @@ build:
     - script:
         name: go build
         code: |
-          go build -o app ./...
+          CGO_ENABLED=0 go build -a -ldflags '-s' -installsuffix cgo -o app .
         # Copy binary to location that gets passed along to deploy
+
+    - script:
+        name: create cities-controller.json
+        code: ./create_cities-controller.json.sh
+
     - script:
         name: copy binary
-        code: cp app cities-service.json cities-blue-controller.json cities-green-controller.json download-kube.sh $WERCKER_OUTPUT_DIR
+        code: cp app cities-service.json cities-controller.json "$WERCKER_OUTPUT_DIR"
 
 deploy:
-    box: phusion/baseimage
+    box: google/golang
     steps:
     - script:
-        name: make exec
+        name: make executable
         code: chmod +x /pipeline/source/app
 
     - internal/docker-push:
         username: $USERNAME
         password: $PASSWORD
         cmd: ./pipeline/source/app
-        tag: latest
+        tag: $WERCKER_GIT_COMMIT
         ports: "5000"
-        repository: quay.io/wercker/go-app
+        repository: quay.io/wercker/wercker-kubernetes-quay
         registry: https://quay.io
 
     # Run this to create the rc and service
     initialize:
-    - script:
-        name: fetch kube
-        code: ./download-kube.sh
+    - kubectl:
+        server: $KUBERNETES_MASTER
+        username: $KUBERNETES_USERNAME
+        password: $KUBERNETES_PASSWORD
+        insecure-skip-tls-verify: true
+        command: create -f cities-controller.json
 
-    - script:
-        name: create rc
-        code: |
-            kubernetes/platforms/linux/amd64/kubectl \
-                --server="${KUBERNETES_MASTER}" \
-                --username="${KUBERNETES_USERNAME}" \
-                --password="${KUBERNETES_PASSWORD}" \
-                --insecure-skip-tls-verify="true" \
-                create -f cities-green-controller.json
-
-    - script:
-        name: create service
-        code: |
-            kubernetes/platforms/linux/amd64/kubectl \
-                --server="${KUBERNETES_MASTER}" \
-                --username="${KUBERNETES_USERNAME}" \
-                --password="${KUBERNETES_PASSWORD}" \
-                --insecure-skip-tls-verify="true" \
-                create -f cities-service.json
+    - kubectl:
+        server: $KUBERNETES_MASTER
+        username: $KUBERNETES_USERNAME
+        password: $KUBERNETES_PASSWORD
+        insecure-skip-tls-verify: true
+        command: create -f cities-service.json
 
     rolling-update:
-    - script:
-        name: fetch kube
-        code: ./download-kube.sh
-
-    - script:
-        name: rolling update
-        code: |
-            info "Retrieving running rc"
-            if kubernetes/platforms/linux/amd64/kubectl \
-                    --server="${KUBERNETES_MASTER}" \
-                    --username="${KUBERNETES_USERNAME}" \
-                    --password="${KUBERNETES_PASSWORD}" \
-                    --insecure-skip-tls-verify="true" \
-                    get rc cities-green > /dev/null 2> /dev/null; then
-                info "Currently running rc: cities-green"
-                info "Starting rolling-update"
-                kubernetes/platforms/linux/amd64/kubectl \
-                    --server="${KUBERNETES_MASTER}" \
-                    --username="${KUBERNETES_USERNAME}" \
-                    --password="${KUBERNETES_PASSWORD}" \
-                    --insecure-skip-tls-verify="true" \
-                    rolling-update cities-green --update-period=10s -f cities-blue-controller.json
-                info "Finished update"
-            else
-                info "Currently running rc: cities-blue"
-                info "Starting rolling-update"
-                kubernetes/platforms/linux/amd64/kubectl \
-                    --server="${KUBERNETES_MASTER}" \
-                    --username="${KUBERNETES_USERNAME}" \
-                    --password="${KUBERNETES_PASSWORD}" \
-                    --insecure-skip-tls-verify="true" \
-                    rolling-update cities-blue --update-period=10s -f cities-green-controller.json
-                info "Finished update"
-            fi
-
+    - kubectl:
+        server: $KUBERNETES_MASTER
+        username: $KUBERNETES_USERNAME
+        password: $KUBERNETES_PASSWORD
+        insecure-skip-tls-verify: true
+        command: rolling-update cities
+        image: quay.io/wercker/wercker-kubernetes-quay:$WERCKER_GIT_COMMIT

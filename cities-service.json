@@ -1,9 +1,23 @@
 {
-  "apiVersion": "v1beta1",
-  "kind": "Service",
-  "id": "cities",
-  "port": 5000,
-  "containerPort": "http-server",
-  "selector": { "name": "cities" },
-  "publicIPs": ["172.20.0.10", "172.20.0.11", "172.20.0.12"]
+   "kind": "Service",
+   "apiVersion": "v1beta3",
+   "metadata": {
+      "name": "cities",
+      "labels": {
+         "name": "cities"
+      }
+   },
+   "spec":{
+      "createExternalLoadBalancer": true,
+      "ports": [
+         {
+           "port": 5000,
+           "targetPort": "http-server",
+           "protocol": "TCP"
+         }
+      ],
+      "selector":{
+         "name":"cities"
+      }
+   }
 }
